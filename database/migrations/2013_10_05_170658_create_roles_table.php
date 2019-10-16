@@ -19,6 +19,7 @@ class CreateRolesTable extends Migration
             $table->string('name');
             $table->string('status')->default(Role::ACTIVE);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

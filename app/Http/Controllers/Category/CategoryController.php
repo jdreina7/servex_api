@@ -48,9 +48,8 @@ class CategoryController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Category $category)
     {
-        $category = Category::findOrFail($id);
         return $this->showOne($category);
     }
 
@@ -62,10 +61,8 @@ class CategoryController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Category $category)
     {
-        $category = Category::findOrFail($id);
-
         $rules = [
             'name' => 'unique:categories,name,' . $category->id,
             'status' => 'in:' . Category::ACTIVE . ',' . Category::INACTIVE,
@@ -104,10 +101,8 @@ class CategoryController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Category $category)
     {
-        $category = Category::findOrFail($id);
-
         $category->delete();
 
         return $this->showOne($category);

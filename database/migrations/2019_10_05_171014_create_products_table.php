@@ -26,6 +26,7 @@ class CreateProductsTable extends Migration
             $table->integer('subcategory_id')->unsigned();
             $table->integer('created_by')->unsigned();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('client_id')->references('id')->on('clients');
             $table->foreign('category_id')->references('id')->on('categories');

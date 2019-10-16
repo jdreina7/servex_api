@@ -3,7 +3,7 @@
 use App\Role;
 use App\User;
 use App\Category;
-use App\Subcategories;
+use App\Subcategory;
 use App\Client;
 use App\Product;
 use Illuminate\Database\Seeder;
@@ -23,9 +23,9 @@ class DatabaseSeeder extends Seeder
         User::truncate();
         Client::truncate();
         Category::truncate();
-        Subcategories::truncate();
+        Subcategory::truncate();
         Product::truncate();
-        DB::table('client_category')->truncate();
+        DB::table('category_client')->truncate();
 
         $cantRoles = 2;
         $cantUsuar = 4;
@@ -47,7 +47,7 @@ class DatabaseSeeder extends Seeder
         	}
         );
 
-        factory(Subcategories::class, $cantSubca)->create();
+        factory(Subcategory::class, $cantSubca)->create();
         
         factory(Product::class, $cantProdu)->create();
 

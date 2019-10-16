@@ -7,9 +7,13 @@ use App\Subcategory;
 use App\User;
 use App\Client;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
+    use SoftDeletes;
+    protected $dates = ['deleted_at'];
+    
     const ACTIVE = '1';
     const INACTIVE = '0';
 

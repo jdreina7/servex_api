@@ -49,9 +49,8 @@ class ClientController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Client $client)
     {
-        $client = Client::findOrFail($id);
         return $this->showOne($client);
     }
 
@@ -62,10 +61,8 @@ class ClientController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Client $client)
     {
-        $client = Client::findOrFail($id);
-
         $rules = [
             'bussiness_name' => 'unique:clients,bussiness_name,' . $client->id,
             'status' => 'in:' . Client::ACTIVE . ',' . Client::INACTIVE,
@@ -116,10 +113,8 @@ class ClientController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Client $client)
     {
-        $client = Client::findOrFail($id);
-
         $client->delete();
 
         return $this->showOne($client);

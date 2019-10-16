@@ -6,9 +6,13 @@ use App\User;
 use App\Category;
 use App\Product;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Client extends Model
 {
+    use SoftDeletes;
+    protected $dates = ['deleted_at'];
+    
     const ACTIVE = '1';
     const INACTIVE = '0';
 

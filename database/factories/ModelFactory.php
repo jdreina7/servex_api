@@ -3,7 +3,7 @@
 use App\Role;
 use App\User;
 use App\Category;
-use App\Subcategories;
+use App\Subcategory;
 use App\Client;
 use App\Product;
 use Faker\Generator as Faker;
@@ -77,7 +77,7 @@ $factory->define(Category::class, function (Faker $faker) {
     ];
 });
 
-$factory->define(Subcategories::class, function (Faker $faker) {
+$factory->define(Subcategory::class, function (Faker $faker) {
     return [
         'name' => $faker->word,
         'description' => $faker->paragraph(1),
@@ -97,7 +97,7 @@ $factory->define(Product::class, function (Faker $faker) {
         'status' => $faker->randomElement([User::ACTIVE, User::INACTIVE]),
         'client_id' => Client::all()->random()->id,
         'category_id' => Category::all()->random()->id,
-        'subcategory_id' => Subcategories::all()->random()->id,
+        'subcategory_id' => Subcategory::all()->random()->id,
         'created_by' => User::all()->random()->id,
         'created_at' => now(),
         'updated_at' => now(),

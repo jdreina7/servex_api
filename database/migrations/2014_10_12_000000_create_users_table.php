@@ -25,6 +25,7 @@ class CreateUsersTable extends Migration
             $table->string('status')->default(User::ACTIVE);
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('role_id')->references('id')->on('roles');
         });

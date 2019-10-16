@@ -22,6 +22,7 @@ class CreateCategoriesTable extends Migration
             $table->string('status')->default(Category::ACTIVE);
             $table->integer('created_by')->unsigned();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('created_by')->references('id')->on('users');
         });

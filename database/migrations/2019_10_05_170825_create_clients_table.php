@@ -25,6 +25,7 @@ class CreateClientsTable extends Migration
             $table->string('status')->default(Client::ACTIVE);
             $table->integer('created_by')->unsigned();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('created_by')->references('id')->on('users');
         });

@@ -52,9 +52,8 @@ class ProductController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Product $product)
     {
-        $product = Product::findOrFail($id);
         return $this->showOne($product);
     }
 
@@ -65,10 +64,8 @@ class ProductController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Product $product)
     {
-        $product = Product::findOrFail($id);
-
         $rules = [
             'name' => 'unique:products,name,' . $product->id,
             'status' => 'in:' . Product::ACTIVE . ',' . Product::INACTIVE,
@@ -123,10 +120,8 @@ class ProductController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Product $product)
     {
-        $product = Product::findOrFail($id);
-
         $product->delete();
 
         return $this->showOne($product);

@@ -47,9 +47,8 @@ class RoleController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Role $role)
     {
-        $role = Role::findOrFail($id);
         return $this->showOne($role);
     }
 
@@ -60,9 +59,8 @@ class RoleController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Role $role)
     {
-        $role = Role::findOrFail($id);
 
         $rules = [
             'status' => 'in:' . Role::ACTIVE . ',' . Role::INACTIVE,
@@ -93,10 +91,8 @@ class RoleController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Role $role)
     {
-        $role = Role::findOrFail($id);
-
         $role->delete();
 
         return $this->showOne($role);

@@ -5,11 +5,15 @@ namespace App;
 use App\Category;
 use App\Subcategory;
 use App\User;
-use App\Clients;
+use App\Client;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
+    use SoftDeletes;
+    protected $dates = ['deleted_at'];
+    
     const IS_AVAILABLE = '1';
 	const IS_NOT_AVAILABLE = '0';
 
