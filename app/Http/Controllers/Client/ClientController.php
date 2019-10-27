@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Client;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use Illuminate\Support\Facades\Storage;
 
 class ClientController extends ApiController
 {
@@ -29,18 +30,36 @@ class ClientController extends ApiController
     public function store(Request $request)
     {
         $rules = [
-            'bussiness_name' => 'required',
+            'name' => 'regex:/^([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-])+((\s*)+([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-]*)*)+$/',
+            'surname' => 'regex:/^([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-])+((\s*)+([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-]*)*)+$/',
+            'bussiness_name' => 'required|regex:/^([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-])+((\s*)+([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-]*)*)+$/',
             'description' => 'required',
             'logo' => 'required'
         ];
 
+        $fecha_actual = date("d") . "-" . date("m") . "-" . date("Y");
+
         $this->validate($request, $rules);
 
-        $fields = $request->all();
+        $extension = $request->logo->extension();
+        //$fields = $request->all();
 
-        $client = Client::create($fields);
+        $data = $request->all();
 
-        return $this->showOne($client);
+        //print_r($data);
+
+        //$clientName = strtolower(str_replace(' ', '_', $data['bussiness_name']));
+        $clientName = str_slug($data['bussiness_name'], '_');
+
+        $nameFile = $clientName.'-'.$fecha_actual.'.'.$extension;
+
+        $data['status'] = Client::ACTIVE;
+        //$data['logo'] = $request->logo->store($clientName.'-'.$fecha_actual,'images'); Crea carpeta
+        $data['logo'] = $request->logo->storeAs('', $nameFile, 'images');
+
+        $client = Client::create($data);
+
+        return $this->showOne($client, 201);
     }
 
     /**
@@ -91,7 +110,15 @@ class ClientController extends ApiController
         }
 
         if ($request->has('logo')) {
-            $client->logo = $request->logo;
+
+            $fecha_actual = date("d") . "-" . date("m") . "-" . date("Y");
+            $extension = $request->logo->extension();
+            $clientName = str_slug($request->bussiness_name, '_');
+            $nameFile = $clientName.'-'.$fecha_actual.'.'.$extension;
+
+            unlink('img/'.$client->logo);
+
+            $client->logo = $request->logo->storeAs('', $nameFile, 'images');
         }
 
         if ($request->has('status')) {
@@ -115,6 +142,7 @@ class ClientController extends ApiController
      */
     public function destroy(Client $client)
     {
+        unlink('img/'.$client->logo); // Eliminamos de la ruta public/img/ el logo del cliente
         $client->delete();
 
         return $this->showOne($client);
