@@ -15,7 +15,7 @@ class ProductSubcategoryController extends ApiController
      */
     public function index(Product $product)
     {
-        $subcategory = $product->subcategory;
-        return $this->showOne($subcategory);
+        $subcategories = $product->subcategories;
+        return $this->showOne($subcategories);
     }
 }

@@ -6,7 +6,7 @@ use App\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 
-class CategorySubcategoryController extends ApiController
+class CategoryClientController extends ApiController
 {
     /**
      * Display a listing of the resource.
@@ -15,9 +15,8 @@ class CategorySubcategoryController extends ApiController
      */
     public function index(Category $category)
     {
-        $subcategories = $category->subcategories;
-        return $this->showAll($subcategories);
-        // return 'Entro aqui Juan';
+        $clients = $category->clients;
+        return $this->showAll($clients);
     }
 
 }

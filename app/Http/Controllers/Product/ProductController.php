@@ -5,9 +5,17 @@ namespace App\Http\Controllers\Product;
 use App\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use App\Transformers\ProductTransformer;
 
 class ProductController extends ApiController
 {
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->middleware('transform.input:' . ProductTransformer::class)->only(['store', 'update']);
+    }
+
     /**
      * Display a listing of the resource.
      *

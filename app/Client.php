@@ -5,6 +5,7 @@ namespace App;
 use App\User;
 use App\Category;
 use App\Product;
+use App\Transformers\ClientTransformer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -12,6 +13,8 @@ class Client extends Model
 {
     use SoftDeletes;
     protected $dates = ['deleted_at'];
+
+    public $transformer = ClientTransformer::class;
     
     const ACTIVE = '1';
     const INACTIVE = '0';
@@ -89,5 +92,9 @@ class Client extends Model
 
     public function products() {
     	return $this->hasMany(Product::class);
+    }
+
+    public function subcategories() {
+        return $this->hasManyThrough(Subcategory::class, Product::class);
     }
 }

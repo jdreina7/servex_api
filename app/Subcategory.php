@@ -4,6 +4,7 @@ namespace App;
 
 use App\Category;
 use App\Product;
+use App\Transformers\SubcategoryTransformer;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,6 +13,8 @@ class Subcategory extends Model
 {
     use SoftDeletes;
     protected $dates = ['deleted_at'];
+
+    public $transformer = SubcategoryTransformer::class;
 
     const ACTIVE = '1';
     const INACTIVE = '0';

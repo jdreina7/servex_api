@@ -5,10 +5,18 @@ namespace App\Http\Controllers\Client;
 use App\Client;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use App\Transformers\ClientTransformer;
 use Illuminate\Support\Facades\Storage;
 
 class ClientController extends ApiController
 {
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->middleware('transform.input:' . ClientTransformer::class)->only(['store', 'update']);
+    }
+
     /**
      * Display a listing of the resource.
      *

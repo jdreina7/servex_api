@@ -6,6 +6,7 @@ use App\Product;
 use App\Subcategory;
 use App\User;
 use App\Client;
+use App\Transformers\CategoryTransformer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -13,6 +14,8 @@ class Category extends Model
 {
     use SoftDeletes;
     protected $dates = ['deleted_at'];
+
+    public $transformer = CategoryTransformer::class;
     
     const ACTIVE = '1';
     const INACTIVE = '0';

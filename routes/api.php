@@ -21,6 +21,8 @@ Route::resource('users', 'User\UserController', ['except' => ['create', 'edit']]
  */
 Route::resource('clients', 'Client\ClientController', ['except' => ['create', 'edit']]);
 Route::resource('clients.categories', 'Client\ClientCategoryController', ['only' => ['index']]);
+Route::resource('clients.products', 'Client\ClientProductController', ['only' => ['index']]);
+// Route::resource('clients.subcategories', 'Client\ClientSubcategoryController', ['only' => ['index']]);
 
 /**
  * Category
@@ -28,6 +30,7 @@ Route::resource('clients.categories', 'Client\ClientCategoryController', ['only'
 Route::resource('categories', 'Category\CategoryController', ['except' => ['create', 'edit']]);
 Route::resource('categories.products', 'Category\CategoryProductController', ['only' => ['index']]);
 Route::resource('categories.subcategories', 'Category\CategorySubcategoryController', ['only' => ['index']]);
+Route::resource('categories.clients', 'Category\CategoryClientController', ['only' => ['index']]);
 
 /**
  * Subcategory

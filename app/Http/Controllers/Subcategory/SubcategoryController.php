@@ -5,9 +5,17 @@ namespace App\Http\Controllers\Subcategory;
 use App\Subcategory;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use App\Transformers\SubcategoryTransformer;
 
 class SubcategoryController extends ApiController
 {
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->middleware('transform.input:' . SubcategoryTransformer::class)->only(['store', 'update']);
+    }
+
     /**
      * Display a listing of the resource.
      *
