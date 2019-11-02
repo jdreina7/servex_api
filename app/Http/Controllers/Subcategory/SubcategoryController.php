@@ -11,8 +11,9 @@ class SubcategoryController extends ApiController
 {
     public function __construct()
     {
-        parent::__construct();
-
+        // parent::__construct();
+        $this->middleware('client.credentials')->only(['index', 'show']);
+        $this->middleware('auth:api')->except([ 'store', 'update', 'destroy']);
         $this->middleware('transform.input:' . SubcategoryTransformer::class)->only(['store', 'update']);
     }
 

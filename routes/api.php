@@ -46,3 +46,5 @@ Route::resource('products', 'Product\ProductController', ['except' => ['create',
 Route::resource('products.clients', 'Product\ProductClientController', ['only' => ['index']]);
 Route::resource('products.categories', 'Product\ProductCategoryController', ['only' => ['index']]);
 Route::resource('products.subcategories', 'Product\ProductSubcategoryController', ['only' => ['index']]);
+
+Route::post('oauth/token', '\Laravel\Passport\Http\Controllers\AccessTokenController@issueToken');
