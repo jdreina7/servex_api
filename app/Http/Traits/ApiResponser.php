@@ -17,6 +17,7 @@ trait ApiResponser {
 
     // Respuestas con error
     protected function errorResponse($message, $code) {
+        // return $message;
         return response()->json(['error' => $message, 'code' => $code], $code);
     }
 
@@ -73,10 +74,7 @@ trait ApiResponser {
         ];
 
         Validator::validate(request()->all(), $rules);
-
-
         $page = LengthAwarePaginator::resolveCurrentPage();
-
         $perPage = 15;
 
         // Validamos si envian una pagina desde la URL como paginacion personalizada
@@ -91,7 +89,6 @@ trait ApiResponser {
         ]);
 
         $paginated->appends(request()->all());
-
         return $paginated;
     }
 

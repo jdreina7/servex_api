@@ -13,8 +13,8 @@ class ClientController extends ApiController
     public function __construct()
     {
         // parent::__construct();
-        $this->middleware('client.credentials')->only(['index', 'show']);
-        $this->middleware('auth:api')->except([ 'store', 'update', 'destroy']);
+        // $this->middleware('client.credentials')->only(['index', 'show']);
+        $this->middleware('auth:api')->except(['index', 'show']);
         $this->middleware('transform.input:' . ClientTransformer::class)->only(['store', 'update']);
     }
 
@@ -43,7 +43,7 @@ class ClientController extends ApiController
             'surname' => 'regex:/^([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-])+((\s*)+([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-]*)*)+$/',
             'bussiness_name' => 'required|regex:/^([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-])+((\s*)+([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-]*)*)+$/',
             'description' => 'required',
-            'logo' => 'required'
+            'logo' => 'required|mimes:jpg,jpeg,png,|max:3000'
         ];
 
         $fecha_actual = date("d") . "-" . date("m") . "-" . date("Y");
@@ -55,7 +55,8 @@ class ClientController extends ApiController
 
         $data = $request->all();
 
-        //print_r($data);
+        // print_r($data);
+        // die();
 
         //$clientName = strtolower(str_replace(' ', '_', $data['bussiness_name']));
         $clientName = str_slug($data['bussiness_name'], '_');

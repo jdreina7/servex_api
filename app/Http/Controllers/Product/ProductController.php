@@ -6,14 +6,15 @@ use App\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 use App\Transformers\ProductTransformer;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends ApiController
 {
     public function __construct()
     {
         // parent::__construct();
-        $this->middleware('client.credentials')->only(['index', 'show']);
-        $this->middleware('auth:api')->except([ 'store', 'update', 'destroy']);
+        // $this->middleware('client.credentials')->only(['index', 'show']);
+        $this->middleware('auth:api')->except(['index', 'show']);
         $this->middleware('transform.input:' . ProductTransformer::class)->only(['store', 'update']);
     }
 
@@ -38,19 +39,45 @@ class ProductController extends ApiController
     public function store(Request $request)
     {
         $rules = [
-            'name' => 'required|unique:products',
-            'file_route' => 'required',
-            'img' => 'required',
+            'name' => 'required|regex:/^([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-])+((\s*)+([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-]*)*)+$/|unique:products',
+            'description' => 'regex:/^([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-])+((\s*)+([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-]*)*)+$/',
+            'file_route' => 'required|mimes:zip|max:10000',
+            'img' => 'required|mimes:jpg,jpeg,png,|max:3000',
             'client_id' => 'required',
             'category_id' => 'required',
             'subcategory_id' => 'required'
         ];
 
+        $fecha_actual = date("d") . "-" . date("m") . "-" . date("Y");
+
         $this->validate($request, $rules);
 
-        $fields = $request->all();
+        $extension1 = $request->img->extension();
 
-        $product = Product::create($fields);
+        $extension2 = $request->file_route->extension();
+
+        $data = $request->all();
+
+        $clienteID = $data['client_id'];
+
+        $clientName = DB::table('clients')->where('id', $clienteID)->pluck('name'); // Obtener una columna
+
+        // print_r($clientName[0]);
+        // die();
+
+        $productName = str_slug($data['name'], '_');
+
+        $nameImg = $productName.'-'.$fecha_actual.'.'.$extension1;
+        $nameFile = $productName.'-'.$fecha_actual.'.'.$extension2;
+
+        $data['status'] = Product::ACTIVE;
+
+        // $data['img'] = $request->img->store($clientName[0],  'product_file'); // Crea carpeta
+        // $data['file_route'] = $request->file_route->store($clientName[0], 'product_file'); // Crea carpeta
+        $data['img'] = $request->img->storeAs($clientName[0].'-'.$productName, $nameImg, 'product_file');
+        $data['file_route'] = $request->file_route->storeAs($clientName[0].'-'.$productName, $nameFile, 'product_file');
+
+        $product = Product::create($data);
 
         return $this->showOne($product);
     }
@@ -91,6 +118,8 @@ class ProductController extends ApiController
         }
 
         if ($request->has('file_route')) {
+            // unlink('product_file/'.$data['img']);
+            // unlink('product_file/'.$data['file_route']);
             $product->file_route = $request->file_route;
         }
 
