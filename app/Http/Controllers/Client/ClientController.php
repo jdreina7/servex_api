@@ -6,6 +6,7 @@ use App\Client;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 use App\Transformers\ClientTransformer;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ClientController extends ApiController
@@ -93,8 +94,12 @@ class ClientController extends ApiController
     public function update(Request $request, Client $client)
     {
         $rules = [
-            'bussiness_name' => 'unique:clients,bussiness_name,' . $client->id,
+            'bussiness_name' => 'required|regex:/^([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-])+((\s*)+([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-]*)*)+$/|unique:clients,bussiness_name,' . $client->id,
             'status' => 'in:' . Client::ACTIVE . ',' . Client::INACTIVE,
+            'name' => 'regex:/^([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-])+((\s*)+([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-]*)*)+$/',
+            'surname' => 'regex:/^([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-])+((\s*)+([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-]*)*)+$/',
+            'description' => 'required',
+            'logo' => 'required|mimes:jpg,jpeg,png,|max:3000'
         ];
 
         $this->validate($request, $rules);
@@ -126,7 +131,17 @@ class ClientController extends ApiController
             $clientName = str_slug($request->bussiness_name, '_');
             $nameFile = $clientName.'-'.$fecha_actual.'.'.$extension;
 
-            unlink('img/'.$client->logo);
+            // $clienteID = $client['id'];
+            // $hasLogo = DB::table('clients')->where('id', $clienteID)->pluck('logo');
+
+            $exists = is_file( 'img/'.$client->logo );
+
+            // print_r($exists);
+            // die();
+
+            if ($exists) {
+                unlink('img/'.$client->logo);
+            }
 
             $client->logo = $request->logo->storeAs('', $nameFile, 'images');
         }

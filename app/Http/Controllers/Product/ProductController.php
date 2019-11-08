@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends ApiController
 {
+
+
     public function __construct()
     {
         // parent::__construct();
@@ -44,11 +46,10 @@ class ProductController extends ApiController
             'file_route' => 'required|mimes:zip|max:10000',
             'img' => 'required|mimes:jpg,jpeg,png,|max:3000',
             'client_id' => 'required',
-            'category_id' => 'required',
-            'subcategory_id' => 'required'
+            'category_id' => 'required'
         ];
 
-        $fecha_actual = date("d") . "-" . date("m") . "-" . date("Y");
+        //$fecha_actual = date("d") . "-" . date("m") . "-" . date("Y");
 
         $this->validate($request, $rules);
 
@@ -66,6 +67,8 @@ class ProductController extends ApiController
         // die();
 
         $productName = str_slug($data['name'], '_');
+
+        $fecha_actual = date("d") . "-" . date("m") . "-" . date("Y");
 
         $nameImg = $productName.'-'.$fecha_actual.'.'.$extension1;
         $nameFile = $productName.'-'.$fecha_actual.'.'.$extension2;
@@ -103,8 +106,13 @@ class ProductController extends ApiController
     public function update(Request $request, Product $product)
     {
         $rules = [
-            'name' => 'unique:products,name,' . $product->id,
+            'name' => 'required|regex:/^([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-])+((\s*)+([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-]*)*)+$/|unique:products,name,' . $product->id,
             'status' => 'in:' . Product::ACTIVE . ',' . Product::INACTIVE,
+            'description' => 'regex:/^([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-])+((\s*)+([0-9a-zA-ZñÑáéíóúÁÉÍÓÚ_-]*)*)+$/',
+            'file_route' => 'required|mimes:zip|max:10000',
+            'img' => 'required|mimes:jpg,jpeg,png,|max:3000',
+            'client_id' => 'required',
+            'category_id' => 'required'
         ];
 
         $this->validate($request, $rules);
@@ -118,13 +126,46 @@ class ProductController extends ApiController
         }
 
         if ($request->has('file_route')) {
-            // unlink('product_file/'.$data['img']);
-            // unlink('product_file/'.$data['file_route']);
-            $product->file_route = $request->file_route;
+            $extension = $request->file_route->extension();
+            $productName = str_slug($request->name, '_');
+            $fecha_actual = date("d") . "-" . date("m") . "-" . date("Y");
+            $nameFile = $productName.'-'.$fecha_actual.'.'.$extension;
+
+            $exists = is_file( 'product_file/'.$product->file_route );
+
+            if ($exists) {
+                unlink('product_file/'.$product->file_route);
+            }
+
+            $clienteID = $product->client_id;
+            $clientName = DB::table('clients')->where('id', $clienteID)->pluck('name'); // Obtener una columna
+
+            // print_r($clienteID.'-'.$clientName[0]);
+            // die();
+
+            $product->file_route = $request->file_route->storeAs($clientName[0].'-'.$productName, $nameFile, 'product_file');
         }
 
         if ($request->has('img')) {
-            $product->img = $request->img;
+            $extension = $request->img->extension();
+            $productName = str_slug($request->name, '_');
+            $fecha_actual = date("d") . "-" . date("m") . "-" . date("Y");
+            $nameFile = $productName.'-'.$fecha_actual.'.'.$extension;
+
+            $exists = is_file( 'product_file/'.$product->img );
+
+            if ($exists) {
+                unlink('product_file/'.$product->img);
+            }
+
+            $clienteID = $product->client_id;
+            $clientName = DB::table('clients')->where('id', $clienteID)->pluck('name'); // Obtener una columna
+
+            // print_r($clienteID.'-'.$clientName[0]);
+            // die();
+
+            $product->img = $request->img->storeAs($clientName[0].'-'.$productName, $nameFile, 'product_file');
+            
         }
 
         if ($request->has('status')) {
@@ -160,6 +201,17 @@ class ProductController extends ApiController
      */
     public function destroy(Product $product)
     {
+        $exists1 = is_file( 'product_file/'.$product->img );
+        $exists2 = is_file( 'product_file/'.$product->file_route );
+
+        if ($exists1) {
+            unlink('product_file/'.$product->img);
+        }
+
+        if ($exists2) {
+            unlink('product_file/'.$product->file_route);
+        }
+
         $product->delete();
 
         return $this->showOne($product);
